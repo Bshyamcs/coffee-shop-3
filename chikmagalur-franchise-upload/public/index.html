@@ -9,7 +9,7 @@
     <meta property="og:title" content="Chikmagalur Filter Coffee | Franchise Opportunity">
     <meta property="og:description" content="Partner with an authentic South Indian filter coffee brand. Apply for a franchise today.">
     <meta property="og:type" content="website">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%236B4935'/%3E%3Cpath d='M20 22h20v14a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8z' fill='%23FDFCF9'/%3E%3Cpath d='M40 25h3a5 5 0 0 1 0 10h-3' fill='none' stroke='%23FDFCF9' stroke-width='3'/%3E%3C/svg%3E">
+    <link rel="icon" href="/images/logo/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
@@ -22,9 +22,19 @@
 <!-- ============================ HEADER ============================ -->
 <header id="header" class="fixed top-0 inset-x-0 z-40 h-16 bg-offwhite/95 backdrop-blur border-b border-black/5">
     <div class="max-w-7xl mx-auto h-full px-4 md:px-8 flex items-center justify-between">
-        <a href="#/" class="flex flex-col leading-none" aria-label="Chikmagalur Filter Coffee - home">
-            <span class="font-serif-heading text-xl md:text-2xl tracking-[0.25em] text-charcoal">CHIKMAGALUR</span>
-            <span class="text-[9px] tracking-[0.3em] text-coffee font-semibold mt-0.5">FILTER COFFEE</span>
+        <a href="#/" class="flex items-center gap-2.5" aria-label="Chikmagalur Filter Coffee - home">
+            <svg viewBox="0 0 200 200" class="w-8 h-8 md:w-9 md:h-9 text-coffee shrink-0" aria-hidden="true">
+<circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="7"/>
+<g stroke="currentColor" stroke-width="9" fill="none" stroke-linecap="round">
+<path d="M78 46 C70 38 86 30 78 20"/><path d="M100 42 C92 34 108 26 100 16"/><path d="M122 46 C114 38 130 30 122 20"/>
+</g>
+<path d="M74 66 H126 L120 132 C119 140 113 145 105 145 H95 C87 145 81 140 80 132 Z" fill="currentColor"/>
+<ellipse cx="100" cy="152" rx="46" ry="10" fill="currentColor"/>
+</svg>
+            <span class="flex flex-col leading-none">
+                <span class="font-serif-heading text-xl md:text-2xl tracking-[0.25em] text-charcoal">CHIKMAGALUR</span>
+                <span class="text-[9px] tracking-[0.3em] text-coffee font-semibold mt-0.5">FILTER COFFEE</span>
+            </span>
         </a>
         <nav class="hidden lg:flex items-center space-x-8 text-[11px] uppercase tracking-widest font-medium" aria-label="Main">
             <a href="#/models" class="text-charcoal/70 hover:text-coffee transition-colors">Franchise Models</a>
@@ -66,12 +76,14 @@
 
     <!-- HERO -->
     <section id="sec-top" class="relative h-[calc(100vh-64px)] min-h-[560px] max-h-[920px] flex flex-col justify-end overflow-hidden">
-        <img id="hero-img" data-fb="hero" alt="Chikmagalur coffee plantation" class="absolute inset-0 w-full h-full object-cover hero-kenburns">
-        <div class="absolute inset-0 bg-black/35"></div>
+        <img id="hero-img" data-fb="hero" alt="Chikmagalur Filter Coffee storefront, Hyderabad" class="absolute inset-0 w-full h-full object-cover hero-kenburns">
+        <div class="absolute inset-0 bg-black/25"></div>
         <div class="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4">
-            <p class="text-[11px] tracking-superwide uppercase text-white/85 mb-5">Franchise Opportunity</p>
-            <h1 id="hero-heading" class="font-serif-heading text-5xl md:text-7xl lg:text-8xl text-white font-light leading-[1.02]"></h1>
-            <p id="hero-sub" class="mt-6 max-w-2xl text-white/90 text-base md:text-lg font-light leading-relaxed"></p>
+            <div class="bg-black/55 backdrop-blur-[2px] px-6 py-10 sm:px-12 md:px-20 md:py-14 max-w-4xl">
+                <p class="text-[11px] tracking-superwide uppercase text-white/85 mb-5">Franchise Opportunity</p>
+                <h1 id="hero-heading" class="font-serif-heading text-5xl md:text-7xl lg:text-8xl text-white font-light leading-[1.02]"></h1>
+                <p id="hero-sub" class="mt-6 max-w-2xl mx-auto text-white/90 text-base md:text-lg font-light leading-relaxed"></p>
+            </div>
             <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
                 <a href="#/apply" class="bg-white text-charcoal hover:bg-coffee hover:text-white px-8 py-4 text-xs tracking-widest uppercase font-medium transition-colors">Apply for a Franchise &rarr;</a>
                 <a href="#/models" class="border border-white/70 text-white hover:bg-white hover:text-charcoal px-8 py-4 text-xs tracking-widest uppercase font-medium transition-colors">View Franchise Models</a>
@@ -109,6 +121,27 @@
                     <h3 class="mt-4 text-sm font-semibold uppercase tracking-widest">Supply &amp; Operations</h3>
                     <p class="mt-2 text-xs font-light text-charcoal/70 leading-relaxed">Consistent supply chain and ongoing operational support after launch.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OUTLET GALLERY (real photos of the flagship outlet; distinct from the hero and story photos) -->
+    <section class="py-16 md:py-20 bg-surface border-b border-black/5">
+        <div class="max-w-7xl mx-auto px-4 md:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <span class="text-[11px] tracking-widest uppercase text-coffee font-semibold">See It For Yourself</span>
+                <h2 class="font-serif-heading text-4xl md:text-5xl font-normal mt-3 uppercase">Our Flagship Outlet</h2>
+                <p class="mt-4 text-sm font-light text-charcoal/70">This is the real store your franchise outlet is modelled on &mdash; not a mockup.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <figure class="m-0">
+                    <div class="aspect-[4/3] overflow-hidden bg-white"><img src="/images/serving-counter.jpg" alt="Staff serving a customer at the counter" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"></div>
+                    <figcaption class="mt-3 text-xs font-light text-charcoal/60">Behind the counter, Hyderabad outlet</figcaption>
+                </figure>
+                <figure class="m-0">
+                    <div class="aspect-[4/3] overflow-hidden bg-white"><img src="/images/sign-closeup.jpg" alt="Chikmagalur Filter Coffee signage" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"></div>
+                    <figcaption class="mt-3 text-xs font-light text-charcoal/60">Our storefront signage</figcaption>
+                </figure>
             </div>
         </div>
     </section>
@@ -242,9 +275,21 @@
 <footer class="bg-charcoal text-white/80 pt-16 pb-8">
     <div class="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
         <div class="col-span-2">
-            <div class="font-serif-heading text-2xl tracking-[0.25em] text-white">CHIKMAGALUR</div>
-            <div class="text-[9px] tracking-[0.3em] text-white/60 mb-4">FILTER COFFEE</div>
-            <p class="text-xs font-light max-w-xs leading-relaxed">Authentic South Indian coffee, rooted in Chikmagalur estate heritage.</p>
+            <div class="flex items-center gap-2.5 mb-1">
+                <svg viewBox="0 0 200 200" class="w-9 h-9 text-white shrink-0" aria-hidden="true">
+<circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="7"/>
+<g stroke="currentColor" stroke-width="9" fill="none" stroke-linecap="round">
+<path d="M78 46 C70 38 86 30 78 20"/><path d="M100 42 C92 34 108 26 100 16"/><path d="M122 46 C114 38 130 30 122 20"/>
+</g>
+<path d="M74 66 H126 L120 132 C119 140 113 145 105 145 H95 C87 145 81 140 80 132 Z" fill="currentColor"/>
+<ellipse cx="100" cy="152" rx="46" ry="10" fill="currentColor"/>
+</svg>
+                <span class="flex flex-col leading-none">
+                    <span class="font-serif-heading text-2xl tracking-[0.25em] text-white">CHIKMAGALUR</span>
+                    <span class="text-[9px] tracking-[0.3em] text-white/60">FILTER COFFEE</span>
+                </span>
+            </div>
+            <p class="mt-3 text-xs font-light max-w-xs leading-relaxed">Authentic South Indian coffee, rooted in Chikmagalur estate heritage.</p>
         </div>
         <div>
             <h4 class="text-[11px] uppercase tracking-widest text-white mb-4">Franchise</h4>
@@ -267,7 +312,7 @@
     </div>
     <div class="max-w-7xl mx-auto px-4 md:px-8 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-2 text-[11px] font-light text-white/50">
         <span>&copy; 2026 Chikmagalur Filter Coffee. All rights reserved.</span>
-        <span>Developed by Chandra Shekar </span>
+        <span>Developed by Chandra Shekar &amp; Greeshma</span>
     </div>
 </footer>
 
