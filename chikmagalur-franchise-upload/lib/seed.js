@@ -26,8 +26,8 @@ const DEFAULT_SETTINGS = {
   whatsappMsg: 'Hello Chikmagalur Filter Coffee, I am interested in a franchise. Please share the details.',
   heroHeading: 'OWN A CHIKMAGALUR\nFILTER COFFEE OUTLET',
   heroSub: "Partner with an authentic South Indian filter coffee brand. Complete store setup, barista training, supply chain and ongoing operational support.",
-  heroImage: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=2000&auto=format&fit=crop',
-  storyImage: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=1000&auto=format&fit=crop',
+  heroImage: '/images/hero-storefront.jpg',
+  storyImage: '/images/story-interior.jpg',
   shippingFee: 49,
   freeShippingAbove: 499,
 };
