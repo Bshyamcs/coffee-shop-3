@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+<rect width="200" height="200" rx="40.0" fill="#151515"/>
+<circle cx="100" cy="100" r="94" fill="none" stroke="#F1ECE4" stroke-width="3.0"/>
+<!-- steam -->
+<g stroke="#F1ECE4" stroke-width="5.0" fill="none" stroke-linecap="round" opacity="0.85">
+  <path d="M78 46 C70 38 86 30 78 20"/>
+  <path d="M100 42 C92 34 108 26 100 16"/>
+  <path d="M122 46 C114 38 130 30 122 20"/>
+</g>
+<!-- tumbler -->
+<path d="M74 66 H126 L120 132 C119 140 113 145 105 145 H95 C87 145 81 140 80 132 Z" fill="#F1ECE4"/>
+<path d="M79 78 H121" stroke="#151515" stroke-width="3.0"/>
+<!-- davara (saucer) -->
+<ellipse cx="100" cy="152" rx="46" ry="10" fill="#F1ECE4"/>
+<ellipse cx="100" cy="149" rx="34" ry="6.5" fill="#151515"/>
+</svg>
