@@ -589,6 +589,23 @@
   });
   actions['close-modal'] = () => closeModal();
 
+  /* ================================================================ preloader */
+  const PRELOAD_START = Date.now();
+  const PRELOAD_MIN_MS = 600;   // avoid a jarring flash if data loads instantly
+  let preloaderHidden = false;
+  function hidePreloader() {
+    if (preloaderHidden) return;
+    preloaderHidden = true;
+    const el = $('#preloader');
+    if (!el) return;
+    const wait = Math.max(0, PRELOAD_MIN_MS - (Date.now() - PRELOAD_START));
+    setTimeout(() => {
+      el.classList.add('preloader-hide');
+      setTimeout(() => el.remove(), 550);
+    }, wait);
+  }
+  setTimeout(hidePreloader, 8000);   // safety net: never let a stuck preloader block the site
+
   /* ================================================================ scroll progress bar */
   function initScrollProgress() {
     const bar = $('#scroll-progress');
@@ -647,6 +664,7 @@
     renderAccountSlot();
     initReveal();
     initScrollProgress();
+    hidePreloader();
     window.addEventListener('hashchange', onRoute);
     onRoute();
   }

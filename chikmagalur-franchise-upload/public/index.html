@@ -17,6 +17,25 @@
     <script src="/art.js"></script>
 </head>
 <body class="bg-offwhite text-charcoal font-sans antialiased selection:bg-coffee selection:text-white">
+<div id="preloader" role="status" aria-live="polite">
+    <span class="sr-only">Loading Chikmagalur Filter Coffee&hellip;</span>
+    <div class="relative w-24 h-24 md:w-28 md:h-28">
+        <svg viewBox="0 0 200 200" class="preloader-ring absolute inset-0 w-full h-full text-gold" aria-hidden="true">
+            <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-dasharray="90 400"/>
+        </svg>
+        <svg viewBox="0 0 200 200" class="absolute inset-0 w-full h-full text-coffee" aria-hidden="true">
+            <g class="steam-wisp" stroke="currentColor" stroke-width="9" fill="none" stroke-linecap="round">
+                <path d="M78 46 C70 38 86 30 78 20"/><path d="M100 42 C92 34 108 26 100 16"/><path d="M122 46 C114 38 130 30 122 20"/>
+            </g>
+            <path d="M74 66 H126 L120 132 C119 140 113 145 105 145 H95 C87 145 81 140 80 132 Z" fill="currentColor"/>
+            <ellipse cx="100" cy="152" rx="46" ry="10" fill="currentColor"/>
+        </svg>
+    </div>
+    <div class="preloader-word mt-6 text-center leading-none">
+        <span class="font-serif-heading text-lg tracking-[0.25em] text-charcoal">CHIKMAGALUR</span>
+        <span class="block text-[9px] tracking-[0.3em] text-coffee font-semibold mt-1">FILTER COFFEE</span>
+    </div>
+</div>
 <div id="scroll-progress" role="presentation" aria-hidden="true"></div>
 <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 bg-charcoal text-white px-3 py-2 text-xs">Skip to content</a>
 
