@@ -589,6 +589,21 @@
   });
   actions['close-modal'] = () => closeModal();
 
+  /* ================================================================ scroll progress bar */
+  function initScrollProgress() {
+    const bar = $('#scroll-progress');
+    if (!bar) return;
+    const update = () => {
+      const h = document.documentElement;
+      const scrollable = h.scrollHeight - h.clientHeight;
+      const pct = scrollable > 0 ? (h.scrollTop / scrollable) * 100 : 0;
+      bar.style.width = pct + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+
   /* ================================================================ scroll reveal */
   let revealObserver = null;
   function initReveal() {
@@ -631,6 +646,7 @@
     if (S.ready) { applySettings(); renderModels(); renderShop(); }
     renderAccountSlot();
     initReveal();
+    initScrollProgress();
     window.addEventListener('hashchange', onRoute);
     onRoute();
   }
