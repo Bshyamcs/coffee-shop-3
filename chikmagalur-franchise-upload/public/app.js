@@ -32,6 +32,11 @@
     trash: '<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>',
     download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
     chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+    bean: '<path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9Z"/><path d="M9 20c-1-4 1-7 3-9s4-5 3-9"/>',
+    flame: '<path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-1-2-1-2 2 2 3 4 3 6a6 6 0 0 1-12 0c0-4 3-6 4-11Z"/>',
+    grinder: '<path d="M6 2h12v6l-3 3v9a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-9L6 8Z"/><path d="M9 15h6"/>',
+    drip: '<path d="M12 2v6M9 8h6l1 5a4 4 0 0 1-8 0Z"/><path d="M8 21h8M10 17v4M14 17v4"/>',
+    cupserve: '<path d="M3 8h14v6a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5Z"/><path d="M17 10h2a3 3 0 0 1 0 6h-2"/><path d="M7 3c0 1.5 1.5 1.5 1.5 3M11 3c0 1.5 1.5 1.5 1.5 3"/>',
   };
   const ic = (name, cls = 'w-5 h-5') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
   const GOOGLE_G = '<svg class="w-4 h-4" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>';
@@ -146,8 +151,8 @@
     const box = $('#plans-grid');
     if (!S.plans.length) { box.innerHTML = '<p class="md:col-span-3 text-center text-sm font-light text-charcoal/60">Franchise models will be published soon. Please <a href="#/apply" class="underline">apply</a> and we will get in touch.</p>'; return; }
     box.innerHTML = S.plans.map((p) => `
-      <article class="relative bg-white border ${p.badge ? 'border-coffee' : 'border-black/10'} p-8 flex flex-col">
-        ${p.badge ? `<span class="absolute -top-3 left-8 bg-coffee text-white text-[10px] tracking-widest uppercase px-3 py-1">${esc(p.badge)}</span>` : ''}
+      <article class="relative bg-white border ${p.badge ? 'border-gold' : 'border-black/10'} p-8 flex flex-col">
+        ${p.badge ? `<span class="absolute -top-3 left-8 bg-gold text-white text-[10px] tracking-widest uppercase px-3 py-1">${esc(p.badge)}</span>` : ''}
         <h3 class="font-serif-heading text-3xl uppercase">${esc(p.name)}</h3>
         <p class="mt-2 text-xs font-light text-charcoal/70 leading-relaxed min-h-[2.5rem]">${esc(p.tagline)}</p>
         <div class="mt-6 pt-6 border-t border-black/10">
