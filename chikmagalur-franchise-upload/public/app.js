@@ -351,19 +351,22 @@
     const o = S.options;
     const planOpts = [{ value: '', label: 'Not sure yet - advise me' }, ...S.plans.map((p) => ({ value: p.id, label: `${p.name} (${lakh(p.investmentMin)} - ${lakh(p.investmentMax)})` }))];
     $('#view-apply').innerHTML = `
-      <section class="py-14 md:py-20 bg-offwhite">
-        <div class="max-w-3xl mx-auto px-4 md:px-8">
+      <section class="relative overflow-hidden py-14 md:py-20 bg-offwhite">
+        <svg class="absolute pointer-events-none text-coffee" style="width:220px;height:220px;top:-40px;right:-30px;opacity:0.3" viewBox="0 0 200 200" aria-hidden="true"><path d="M 176.6 100.0 C 175.8 111.3 172.4 122.3 167.8 132.7 C 163.3 143.0 157.9 155.2 149.4 161.9 C 140.8 168.6 127.7 170.4 116.6 172.8 C 105.5 175.2 93.3 178.4 82.6 176.3 C 71.8 174.2 60.3 167.5 52.0 160.2 C 43.7 152.8 37.8 142.4 32.8 132.3 C 27.8 122.3 21.9 110.8 21.9 100.0 C 22.0 89.2 28.0 77.8 33.0 67.7 C 37.9 57.6 43.3 46.2 51.7 39.4 C 60.1 32.7 72.6 29.3 83.4 27.2 C 94.2 25.2 105.8 25.0 116.6 27.1 C 127.5 29.1 138.9 33.1 148.3 39.5 C 157.6 45.8 167.8 55.0 172.6 65.1 C 177.3 75.1 177.4 88.7 176.6 100.0 Z" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.5"/><path d="M 169.7 100.0 C 169.5 110.3 167.5 121.1 163.4 130.5 C 159.3 139.9 153.1 150.3 145.1 156.6 C 137.2 162.8 125.7 166.1 115.5 168.1 C 105.4 170.0 94.3 170.4 84.4 168.3 C 74.5 166.1 63.7 161.6 56.1 155.1 C 48.4 148.7 42.9 138.8 38.5 129.6 C 34.2 120.4 30.3 110.0 29.9 100.0 C 29.6 90.0 32.0 78.6 36.3 69.3 C 40.5 60.0 47.2 49.9 55.3 44.0 C 63.4 38.1 74.9 35.8 84.9 34.0 C 94.9 32.1 105.8 30.6 115.3 32.8 C 124.9 35.0 134.0 41.1 142.2 47.1 C 150.4 53.1 160.0 60.1 164.6 68.9 C 169.2 77.7 169.9 89.7 169.7 100.0 Z" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/></svg>
+        <div class="relative max-w-3xl mx-auto px-4 md:px-8">
           <a href="#/models" class="text-[11px] uppercase tracking-widest text-charcoal/60 hover:text-coffee">&larr; Franchise models</a>
-          <span class="block mt-6 text-[11px] tracking-widest uppercase text-coffee font-semibold">Franchise Application</span>
-          <h1 class="font-serif-heading text-4xl md:text-6xl font-normal mt-2 uppercase leading-tight">Apply to partner with us</h1>
-          <p class="mt-4 text-sm font-light text-charcoal/70">Tell us a little about you and your plans. Our team will review your application and contact you.</p>
-          ${S.user ? `<p class="mt-4 text-xs bg-surface px-4 py-3">Signed in as <b>${esc(S.user.email)}</b>. You can follow this application under My Account.</p>` : `
-          <div class="mt-6 bg-surface p-5 space-y-3">
+          <div class="reveal mt-6">
+            <span class="block text-[11px] tracking-widest uppercase text-coffee font-semibold">Franchise Application</span>
+            <h1 class="font-serif-heading text-4xl md:text-6xl font-normal mt-2 uppercase leading-tight">Apply to partner with us</h1>
+            <p class="mt-4 text-sm font-light text-charcoal/70">Tell us a little about you and your plans. Our team will review your application and contact you.</p>
+          </div>
+          ${S.user ? `<p class="reveal mt-4 text-xs bg-surface border-l-4 border-gold px-4 py-3">Signed in as <b>${esc(S.user.email)}</b>. You can follow this application under My Account.</p>` : `
+          <div class="reveal mt-6 bg-surface border-l-4 border-gold p-5 space-y-3">
             <p class="text-xs font-light">Sign in to prefill your details and <b>track your application status</b> online.</p>
             ${googleButton('/#/apply')}
             <p class="text-[11px] text-charcoal/60">or <a href="#/login?next=apply" class="underline">sign in with email</a>, or continue as a guest below.</p>
           </div>`}
-          <form data-form="apply" class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5" novalidate>
+          <form data-form="apply" class="reveal mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5" novalidate>
             <div>${lbl('Full name *', 'a-name')}<input id="a-name" name="name" class="field" required value="${esc(u.name || '')}" autocomplete="name"></div>
             <div>${lbl('Email *', 'a-email')}<input id="a-email" name="email" type="email" class="field" required value="${esc(u.email || '')}" autocomplete="email"></div>
             <div>${lbl('Phone / WhatsApp *', 'a-phone')}<input id="a-phone" name="phone" type="tel" class="field" required value="${esc(u.phone || '')}" autocomplete="tel"></div>
@@ -376,10 +379,11 @@
             <div>${lbl('When do you want to start? *', 'a-time')}${selectHtml('timeline', 'a-time', o.timeline || [], '', 'Select timeline')}</div>
             <div class="sm:col-span-2">${lbl('Anything else we should know?', 'a-msg')}<textarea id="a-msg" name="message" rows="4" class="field" maxlength="1500" placeholder="Proposed location, questions, experience..."></textarea></div>
             <label class="sm:col-span-2 flex items-start gap-3 text-xs font-light text-charcoal/80"><input type="checkbox" name="consent" required class="mt-0.5 accent-[#6B4935]"><span>I agree to be contacted by Chikmagalur Filter Coffee about my franchise enquiry.</span></label>
-            <div class="sm:col-span-2"><button class="w-full sm:w-auto bg-charcoal text-white hover:bg-coffee px-10 py-4 text-xs tracking-widest uppercase font-medium transition-colors">Submit application</button></div>
+            <div class="sm:col-span-2"><button class="shine-btn w-full sm:w-auto bg-charcoal text-white hover:bg-gold px-10 py-4 text-xs tracking-widest uppercase font-medium transition-colors">Submit application</button></div>
           </form>
         </div>
       </section>`;
+    initReveal();
   }
   forms.apply = (f) => busy(f, async () => {
     const d = formData(f);
@@ -398,7 +402,9 @@
 
   /* ================================================================ auth views */
   function authCard(title, sub, body) {
-    return `<section class="py-16 md:py-24 bg-surface min-h-[70vh]"><div class="max-w-md mx-auto px-4">
+    return `<section class="relative overflow-hidden py-16 md:py-24 bg-surface min-h-[70vh]">
+      <svg class="absolute pointer-events-none text-coffee" style="width:240px;height:240px;bottom:-50px;left:-40px;opacity:0.25" viewBox="0 0 200 200" aria-hidden="true"><path d="M 176.6 100.0 C 175.8 111.3 172.4 122.3 167.8 132.7 C 163.3 143.0 157.9 155.2 149.4 161.9 C 140.8 168.6 127.7 170.4 116.6 172.8 C 105.5 175.2 93.3 178.4 82.6 176.3 C 71.8 174.2 60.3 167.5 52.0 160.2 C 43.7 152.8 37.8 142.4 32.8 132.3 C 27.8 122.3 21.9 110.8 21.9 100.0 C 22.0 89.2 28.0 77.8 33.0 67.7 C 37.9 57.6 43.3 46.2 51.7 39.4 C 60.1 32.7 72.6 29.3 83.4 27.2 C 94.2 25.2 105.8 25.0 116.6 27.1 C 127.5 29.1 138.9 33.1 148.3 39.5 C 157.6 45.8 167.8 55.0 172.6 65.1 C 177.3 75.1 177.4 88.7 176.6 100.0 Z" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.5"/><path d="M 169.7 100.0 C 169.5 110.3 167.5 121.1 163.4 130.5 C 159.3 139.9 153.1 150.3 145.1 156.6 C 137.2 162.8 125.7 166.1 115.5 168.1 C 105.4 170.0 94.3 170.4 84.4 168.3 C 74.5 166.1 63.7 161.6 56.1 155.1 C 48.4 148.7 42.9 138.8 38.5 129.6 C 34.2 120.4 30.3 110.0 29.9 100.0 C 29.6 90.0 32.0 78.6 36.3 69.3 C 40.5 60.0 47.2 49.9 55.3 44.0 C 63.4 38.1 74.9 35.8 84.9 34.0 C 94.9 32.1 105.8 30.6 115.3 32.8 C 124.9 35.0 134.0 41.1 142.2 47.1 C 150.4 53.1 160.0 60.1 164.6 68.9 C 169.2 77.7 169.9 89.7 169.7 100.0 Z" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/></svg>
+      <div class="reveal relative max-w-md mx-auto px-4">
       <div class="bg-offwhite border border-black/5 p-8 md:p-10 shadow-sm">
         <span class="text-[11px] tracking-widest uppercase text-coffee font-semibold">${esc(sub)}</span>
         <h1 class="font-serif-heading text-4xl uppercase mt-1 mb-6">${esc(title)}</h1>${body}</div></div></section>`;
@@ -411,9 +417,10 @@
       <form data-form="login" data-next="${esc(next || 'account')}" class="space-y-4" novalidate>
         <div>${lbl('Email', 'l-email')}<input id="l-email" name="email" type="email" class="field" required autocomplete="email"></div>
         <div>${lbl('Password', 'l-pass')}<input id="l-pass" name="password" type="password" class="field" required autocomplete="current-password"></div>
-        <button class="w-full bg-charcoal text-white hover:bg-coffee py-3.5 text-xs tracking-widest uppercase font-medium transition-colors">Sign in</button>
+        <button class="shine-btn w-full bg-charcoal text-white hover:bg-gold py-3.5 text-xs tracking-widest uppercase font-medium transition-colors">Sign in</button>
       </form>
       <p class="mt-6 text-xs font-light text-charcoal/70 text-center">New here? <a href="#/signup${next ? '?next=' + esc(next) : ''}" class="underline hover:text-coffee">Create an account</a></p>`);
+    initReveal();
   }
   function renderSignup(next) {
     $('#view-signup').innerHTML = authCard('Create account', 'Join us', `
@@ -423,9 +430,10 @@
         <div>${lbl('Email', 's-email')}<input id="s-email" name="email" type="email" class="field" required autocomplete="email"></div>
         <div>${lbl('Phone (optional)', 's-phone')}<input id="s-phone" name="phone" type="tel" class="field" autocomplete="tel"></div>
         <div>${lbl('Password (min 8 characters)', 's-pass')}<input id="s-pass" name="password" type="password" minlength="8" class="field" required autocomplete="new-password"></div>
-        <button class="w-full bg-charcoal text-white hover:bg-coffee py-3.5 text-xs tracking-widest uppercase font-medium transition-colors">Create account</button>
+        <button class="shine-btn w-full bg-charcoal text-white hover:bg-gold py-3.5 text-xs tracking-widest uppercase font-medium transition-colors">Create account</button>
       </form>
       <p class="mt-6 text-xs font-light text-charcoal/70 text-center">Already registered? <a href="#/login${next ? '?next=' + esc(next) : ''}" class="underline hover:text-coffee">Sign in</a></p>`);
+    initReveal();
   }
   const safeNext = (n) => (/^[a-z-]{1,20}$/.test(n || '') ? n : 'account');
   forms.login = (f) => busy(f, async () => {
@@ -464,18 +472,21 @@
   function renderAccount() {
     const u = S.user;
     const tab = S.acctTab;
-    const tabBtn = (id, label) => `<button data-action="acct-tab" data-tab="${id}" class="px-5 py-3 text-[11px] uppercase tracking-widest border-b-2 ${tab === id ? 'border-coffee text-charcoal font-semibold' : 'border-transparent text-charcoal/50 hover:text-charcoal'}">${label}</button>`;
-    $('#view-account').innerHTML = `<section class="py-12 md:py-16 bg-offwhite min-h-[70vh]"><div class="max-w-4xl mx-auto px-4 md:px-8">
+    const tabBtn = (id, label) => `<button data-action="acct-tab" data-tab="${id}" class="px-5 py-3 text-[11px] uppercase tracking-widest border-b-2 transition-colors ${tab === id ? 'border-gold text-charcoal font-semibold' : 'border-transparent text-charcoal/50 hover:text-charcoal hover:border-gold/40'}">${label}</button>`;
+    $('#view-account').innerHTML = `<section class="relative overflow-hidden py-12 md:py-16 bg-offwhite min-h-[70vh]">
+      <svg class="absolute pointer-events-none text-coffee" style="width:220px;height:220px;top:-30px;right:2%;opacity:0.2" viewBox="0 0 200 200" aria-hidden="true"><path d="M 176.6 100.0 C 175.8 111.3 172.4 122.3 167.8 132.7 C 163.3 143.0 157.9 155.2 149.4 161.9 C 140.8 168.6 127.7 170.4 116.6 172.8 C 105.5 175.2 93.3 178.4 82.6 176.3 C 71.8 174.2 60.3 167.5 52.0 160.2 C 43.7 152.8 37.8 142.4 32.8 132.3 C 27.8 122.3 21.9 110.8 21.9 100.0 C 22.0 89.2 28.0 77.8 33.0 67.7 C 37.9 57.6 43.3 46.2 51.7 39.4 C 60.1 32.7 72.6 29.3 83.4 27.2 C 94.2 25.2 105.8 25.0 116.6 27.1 C 127.5 29.1 138.9 33.1 148.3 39.5 C 157.6 45.8 167.8 55.0 172.6 65.1 C 177.3 75.1 177.4 88.7 176.6 100.0 Z" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.5"/><path d="M 169.7 100.0 C 169.5 110.3 167.5 121.1 163.4 130.5 C 159.3 139.9 153.1 150.3 145.1 156.6 C 137.2 162.8 125.7 166.1 115.5 168.1 C 105.4 170.0 94.3 170.4 84.4 168.3 C 74.5 166.1 63.7 161.6 56.1 155.1 C 48.4 148.7 42.9 138.8 38.5 129.6 C 34.2 120.4 30.3 110.0 29.9 100.0 C 29.6 90.0 32.0 78.6 36.3 69.3 C 40.5 60.0 47.2 49.9 55.3 44.0 C 63.4 38.1 74.9 35.8 84.9 34.0 C 94.9 32.1 105.8 30.6 115.3 32.8 C 124.9 35.0 134.0 41.1 142.2 47.1 C 150.4 53.1 160.0 60.1 164.6 68.9 C 169.2 77.7 169.9 89.7 169.7 100.0 Z" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/></svg>
+      <div class="reveal relative max-w-4xl mx-auto px-4 md:px-8">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-black/10">
         <div class="flex items-center gap-4">
           ${u.picture ? `<img src="${esc(u.picture)}" alt="" referrerpolicy="no-referrer" class="w-14 h-14 rounded-full object-cover">` : `<div class="w-14 h-14 rounded-full bg-coffee text-white flex items-center justify-center font-serif-heading text-2xl">${esc(u.name.charAt(0).toUpperCase())}</div>`}
           <div><h1 class="font-serif-heading text-3xl uppercase leading-none">${esc(u.name)}</h1><p class="text-xs font-light text-charcoal/60 mt-1">${esc(u.email)}${u.provider === 'google' ? ' &middot; Google account' : ''}</p></div>
         </div>
-        <div class="flex gap-2"><a href="#/apply" class="bg-charcoal text-white hover:bg-coffee px-5 py-2.5 text-[11px] uppercase tracking-widest">New application</a>
+        <div class="flex gap-2"><a href="#/apply" class="shine-btn bg-charcoal text-white hover:bg-gold px-5 py-2.5 text-[11px] uppercase tracking-widest">New application</a>
           <button data-action="logout" class="border border-black/15 hover:border-coffee px-5 py-2.5 text-[11px] uppercase tracking-widest">Sign out</button></div>
       </div>
       <div class="flex border-b border-black/10 mt-2 overflow-x-auto">${tabBtn('applications', 'My Applications')}${tabBtn('orders', 'My Orders')}${tabBtn('profile', 'Profile')}</div>
       <div id="acct-body" class="py-8"><p class="text-sm font-light text-charcoal/50">Loading...</p></div></div></section>`;
+    initReveal();
     loadAccountTab();
   }
 
