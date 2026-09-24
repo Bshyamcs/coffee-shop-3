@@ -221,7 +221,7 @@
   async function refreshPublic() {
     const d = await api('/api/bootstrap');
     Object.assign(S, { settings: d.settings, plans: d.plans, products: d.products });
-    window.CFC.applySettings(); window.CFC.renderModels(); window.CFC.renderShop();
+    window.CFC.applySettings(); window.CFC.renderModels(); window.CFC.renderShop(); window.CFC.initReveal();
   }
 
   /* ------------------------------------------------ products */

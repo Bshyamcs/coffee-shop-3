@@ -150,8 +150,9 @@
   function renderModels() {
     const box = $('#plans-grid');
     if (!S.plans.length) { box.innerHTML = '<p class="md:col-span-3 text-center text-sm font-light text-charcoal/60">Franchise models will be published soon. Please <a href="#/apply" class="underline">apply</a> and we will get in touch.</p>'; return; }
-    box.innerHTML = S.plans.map((p) => `
-      <article class="relative bg-white border ${p.badge ? 'border-gold' : 'border-black/10'} p-8 flex flex-col">
+    const stagger = ['reveal-d1', 'reveal-d2', 'reveal-d3', 'reveal-d4', 'reveal-d5'];
+    box.innerHTML = S.plans.map((p, i) => `
+      <article class="reveal ${stagger[i % stagger.length]} relative bg-white border ${p.badge ? 'border-gold' : 'border-black/10'} p-8 flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
         ${p.badge ? `<span class="absolute -top-3 left-8 bg-gold text-white text-[10px] tracking-widest uppercase px-3 py-1">${esc(p.badge)}</span>` : ''}
         <h3 class="font-serif-heading text-3xl uppercase">${esc(p.name)}</h3>
         <p class="mt-2 text-xs font-light text-charcoal/70 leading-relaxed min-h-[2.5rem]">${esc(p.tagline)}</p>
@@ -172,8 +173,9 @@
     const cats = ['All', ...(S.options.categories || [])];
     $('#cat-filters').innerHTML = cats.map((c) => `<button data-action="filter-cat" data-cat="${esc(c)}" class="px-4 py-2 text-[11px] tracking-widest uppercase border transition-colors ${c === S.cat ? 'bg-charcoal text-white border-charcoal' : 'border-black/10 text-charcoal/70 hover:border-coffee'}">${esc(CAT_LABEL[c] || c)}</button>`).join('');
     const list = S.cat === 'All' ? S.products : S.products.filter((p) => p.category === S.cat);
-    $('#product-grid').innerHTML = list.length ? list.map((p) => `
-      <div class="group flex flex-col">
+    const pStagger = ['reveal-d1', 'reveal-d2', 'reveal-d3', 'reveal-d4'];
+    $('#product-grid').innerHTML = list.length ? list.map((p, i) => `
+      <div class="reveal ${pStagger[i % pStagger.length]} group flex flex-col">
         <button data-action="view-product" data-id="${esc(p.id)}" class="aspect-square bg-surface overflow-hidden mb-4 block w-full" aria-label="View ${esc(p.name)}">
           ${img(p.image, window.fbKind(p.category), p.name, 'w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500')}
         </button>
@@ -587,6 +589,28 @@
   });
   actions['close-modal'] = () => closeModal();
 
+  /* ================================================================ scroll reveal */
+  let revealObserver = null;
+  function initReveal() {
+    const els = $$('.reveal:not([data-reveal-bound]), .draw-line:not([data-reveal-bound])');
+    if (!els.length) return;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || typeof IntersectionObserver === 'undefined') {
+      els.forEach((el) => { el.dataset.revealBound = '1'; el.classList.add('is-visible'); });
+      return;
+    }
+    if (!revealObserver) {
+      revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    }
+    els.forEach((el) => { el.dataset.revealBound = '1'; revealObserver.observe(el); });
+  }
+
   /* ================================================================ boot */
   function hydrateIcons() { $$('[data-icon]').forEach((el) => { el.innerHTML = ic(el.dataset.icon, el.dataset.cls || 'w-5 h-5'); el.removeAttribute('data-icon'); }); }
 
@@ -606,11 +630,12 @@
     }
     if (S.ready) { applySettings(); renderModels(); renderShop(); }
     renderAccountSlot();
+    initReveal();
     window.addEventListener('hashchange', onRoute);
     onRoute();
   }
 
   // shared with admin.js
-  window.CFC = { S, api, esc, money, lakh, ic, img, toast, busy, formData, openModal, closeModal, actions, forms, pill, fmtDate, fmtDateTime, lbl, waLink, applySettings, renderModels, renderShop, renderAccountSlot, googleButton, selectHtml };
+  window.CFC = { S, api, esc, money, lakh, ic, img, toast, busy, formData, openModal, closeModal, actions, forms, pill, fmtDate, fmtDateTime, lbl, waLink, applySettings, renderModels, renderShop, renderAccountSlot, googleButton, selectHtml, initReveal };
   boot();
 })();
