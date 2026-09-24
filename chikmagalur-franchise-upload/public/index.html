@@ -235,23 +235,48 @@
     </section>
 
     <!-- FAQ -->
-    <section id="sec-faq" class="py-20 md:py-28 bg-surface">
-        <div class="max-w-3xl mx-auto px-4 md:px-8">
+    <section id="sec-faq" class="relative overflow-hidden py-20 md:py-28 bg-surface"><svg viewBox="0 0 40 60" class="absolute pointer-events-none bean-float text-coffee/10" style="width:56px;height:84px;top:8%;left:4%;--r:-16deg;animation-duration:9.5s;animation-delay:0.3s" aria-hidden="true"><path d="M20 2C34 14 34 46 20 58C6 46 6 14 20 2Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 6V54" stroke="currentColor" stroke-width="1.5"/></svg>
+        <div class="relative max-w-3xl mx-auto px-4 md:px-8">
             <div class="text-center mb-12">
                 <span class="text-[11px] tracking-widest uppercase text-coffee font-semibold">Good To Know</span>
                 <h2 class="font-serif-heading text-4xl md:text-5xl font-normal mt-3 uppercase">Frequently Asked</h2>
             </div>
             <div class="divide-y divide-black/10 border-y border-black/10">
-                <details class="group py-5"><summary class="flex justify-between items-center cursor-pointer text-sm font-medium">How much investment is needed?<span class="chev transition-transform" data-icon="chev" data-cls="w-4 h-4"></span></summary>
-                    <p class="mt-3 text-xs font-light text-charcoal/70 leading-relaxed">It depends on the model, location and size. The models above show an indicative range; our team shares a detailed breakdown during the discovery call.</p></details>
-                <details class="group py-5"><summary class="flex justify-between items-center cursor-pointer text-sm font-medium">Do I need prior experience?<span class="chev transition-transform" data-icon="chev" data-cls="w-4 h-4"></span></summary>
-                    <p class="mt-3 text-xs font-light text-charcoal/70 leading-relaxed">Tell us about your background in the application. We provide barista training and operational support, and will discuss what suits you best.</p></details>
-                <details class="group py-5"><summary class="flex justify-between items-center cursor-pointer text-sm font-medium">Can I propose my own location?<span class="chev transition-transform" data-icon="chev" data-cls="w-4 h-4"></span></summary>
-                    <p class="mt-3 text-xs font-light text-charcoal/70 leading-relaxed">Yes. Mention it in the application (you can also say you are still looking) and we will review the site with you.</p></details>
-                <details class="group py-5"><summary class="flex justify-between items-center cursor-pointer text-sm font-medium">How long does it take to open?<span class="chev transition-transform" data-icon="chev" data-cls="w-4 h-4"></span></summary>
-                    <p class="mt-3 text-xs font-light text-charcoal/70 leading-relaxed">Timelines depend on the location and fit-out. We will give you a realistic schedule after the location review.</p></details>
-                <details class="group py-5"><summary class="flex justify-between items-center cursor-pointer text-sm font-medium">How do I track my application?<span class="chev transition-transform" data-icon="chev" data-cls="w-4 h-4"></span></summary>
-                    <p class="mt-3 text-xs font-light text-charcoal/70 leading-relaxed">Sign in with your Google account (using the same email you applied with) or create an account. Your status and notes from our team appear under My Account.</p></details>
+                <details class="reveal reveal-d1 group py-1">
+                    <summary class="flex justify-between items-center gap-4 cursor-pointer text-sm font-medium px-4 py-4 -mx-4 rounded-none transition-colors hover:bg-white/60">
+                        <span>How much investment is needed?</span>
+                        <span class="chev shrink-0 w-8 h-8 rounded-full border-2 border-gold flex items-center justify-center transition-all duration-300 group-open:bg-gold group-open:text-white group-open:rotate-180" data-icon="chev" data-cls="w-4 h-4 text-coffee group-open:text-white"></span>
+                    </summary>
+                    <p class="px-4 pb-5 text-xs font-light text-charcoal/70 leading-relaxed">It depends on the model, location and size. The models above show an indicative range; our team shares a detailed breakdown during the discovery call.</p>
+                </details>
+                <details class="reveal reveal-d2 group py-1">
+                    <summary class="flex justify-between items-center gap-4 cursor-pointer text-sm font-medium px-4 py-4 -mx-4 rounded-none transition-colors hover:bg-white/60">
+                        <span>Do I need prior experience?</span>
+                        <span class="chev shrink-0 w-8 h-8 rounded-full border-2 border-gold flex items-center justify-center transition-all duration-300 group-open:bg-gold group-open:text-white group-open:rotate-180" data-icon="chev" data-cls="w-4 h-4 text-coffee group-open:text-white"></span>
+                    </summary>
+                    <p class="px-4 pb-5 text-xs font-light text-charcoal/70 leading-relaxed">Tell us about your background in the application. We provide barista training and operational support, and will discuss what suits you best.</p>
+                </details>
+                <details class="reveal reveal-d3 group py-1">
+                    <summary class="flex justify-between items-center gap-4 cursor-pointer text-sm font-medium px-4 py-4 -mx-4 rounded-none transition-colors hover:bg-white/60">
+                        <span>Can I propose my own location?</span>
+                        <span class="chev shrink-0 w-8 h-8 rounded-full border-2 border-gold flex items-center justify-center transition-all duration-300 group-open:bg-gold group-open:text-white group-open:rotate-180" data-icon="chev" data-cls="w-4 h-4 text-coffee group-open:text-white"></span>
+                    </summary>
+                    <p class="px-4 pb-5 text-xs font-light text-charcoal/70 leading-relaxed">Yes. Mention it in the application (you can also say you are still looking) and we will review the site with you.</p>
+                </details>
+                <details class="reveal reveal-d4 group py-1">
+                    <summary class="flex justify-between items-center gap-4 cursor-pointer text-sm font-medium px-4 py-4 -mx-4 rounded-none transition-colors hover:bg-white/60">
+                        <span>How long does it take to open?</span>
+                        <span class="chev shrink-0 w-8 h-8 rounded-full border-2 border-gold flex items-center justify-center transition-all duration-300 group-open:bg-gold group-open:text-white group-open:rotate-180" data-icon="chev" data-cls="w-4 h-4 text-coffee group-open:text-white"></span>
+                    </summary>
+                    <p class="px-4 pb-5 text-xs font-light text-charcoal/70 leading-relaxed">Timelines depend on the location and fit-out. We will give you a realistic schedule after the location review.</p>
+                </details>
+                <details class="reveal reveal-d5 group py-1">
+                    <summary class="flex justify-between items-center gap-4 cursor-pointer text-sm font-medium px-4 py-4 -mx-4 rounded-none transition-colors hover:bg-white/60">
+                        <span>How do I track my application?</span>
+                        <span class="chev shrink-0 w-8 h-8 rounded-full border-2 border-gold flex items-center justify-center transition-all duration-300 group-open:bg-gold group-open:text-white group-open:rotate-180" data-icon="chev" data-cls="w-4 h-4 text-coffee group-open:text-white"></span>
+                    </summary>
+                    <p class="px-4 pb-5 text-xs font-light text-charcoal/70 leading-relaxed">Sign in with your Google account (using the same email you applied with) or create an account. Your status and notes from our team appear under My Account.</p>
+                </details>
             </div>
         </div>
     </section>
@@ -298,23 +323,33 @@
     </section>
 
     <!-- CONTACT -->
-    <section id="sec-contact" class="py-20 md:py-28 bg-surface border-t border-black/5">
-        <div class="max-w-6xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-14">
-            <div>
+    <section id="sec-contact" class="relative overflow-hidden py-20 md:py-28 bg-surface border-t border-black/5">
+        <svg viewBox="0 0 40 60" class="absolute pointer-events-none bean-float text-coffee/15" style="width:60px;height:90px;top:6%;right:4%;--r:14deg;animation-duration:9s;animation-delay:0.6s" aria-hidden="true"><path d="M20 2C9 2 2 15 2 30s7 28 18 28 18-13 18-28S31 2 20 2Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 6C14 16 14 44 20 54" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <div class="relative max-w-6xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-14">
+            <div class="reveal reveal-d1">
                 <span class="text-[11px] tracking-widest uppercase text-coffee font-semibold">Get In Touch</span>
                 <h2 class="font-serif-heading text-4xl md:text-5xl font-normal mt-3 mb-4 uppercase">Let's Connect</h2>
                 <p class="text-sm font-light text-charcoal/70 mb-8">Questions about the franchise, bulk orders or corporate gifting? Write to us.</p>
                 <dl class="space-y-6 text-sm">
-                    <div class="flex gap-4"><span data-icon="pin" data-cls="w-5 h-5 text-coffee shrink-0 mt-0.5"></span><div><dt class="text-[10px] uppercase tracking-widest text-charcoal/50">Store address</dt><dd id="contact-address" class="font-light leading-relaxed"></dd></div></div>
-                    <div class="flex gap-4"><span data-icon="phone" data-cls="w-5 h-5 text-coffee shrink-0 mt-0.5"></span><div><dt class="text-[10px] uppercase tracking-widest text-charcoal/50">Phone</dt><dd><a id="contact-phone" href="#" class="font-light hover:text-coffee"></a></dd></div></div>
-                    <div class="flex gap-4"><span data-icon="mail" data-cls="w-5 h-5 text-coffee shrink-0 mt-0.5"></span><div><dt class="text-[10px] uppercase tracking-widest text-charcoal/50">Email</dt><dd><a id="contact-email" href="#" class="font-light hover:text-coffee"></a></dd></div></div>
+<div class="flex gap-4 items-start">
+                        <span class="shrink-0 w-11 h-11 rounded-full border-2 border-gold flex items-center justify-center bg-offwhite"><span data-icon="pin" data-cls="w-5 h-5 text-coffee"></span></span>
+                        <div><dt class="text-[10px] uppercase tracking-widest text-charcoal/50 pt-2.5">Store address</dt><dd id="contact-address" class="font-light leading-relaxed"></dd></div>
+                    </div>
+<div class="flex gap-4 items-start">
+                        <span class="shrink-0 w-11 h-11 rounded-full border-2 border-gold flex items-center justify-center bg-offwhite"><span data-icon="phone" data-cls="w-5 h-5 text-coffee"></span></span>
+                        <div><dt class="text-[10px] uppercase tracking-widest text-charcoal/50 pt-2.5">Phone</dt><dd><a id="contact-phone" href="#" class="font-light hover:text-coffee"></a></dd></div>
+                    </div>
+<div class="flex gap-4 items-start">
+                        <span class="shrink-0 w-11 h-11 rounded-full border-2 border-gold flex items-center justify-center bg-offwhite"><span data-icon="mail" data-cls="w-5 h-5 text-coffee"></span></span>
+                        <div><dt class="text-[10px] uppercase tracking-widest text-charcoal/50 pt-2.5">Email</dt><dd><a id="contact-email" href="#" class="font-light hover:text-coffee"></a></dd></div>
+                    </div>
                 </dl>
             </div>
-            <form data-form="contact" class="space-y-4" novalidate>
+            <form data-form="contact" class="reveal reveal-d2 space-y-4" novalidate>
                 <div><label class="block text-[10px] uppercase tracking-widest text-charcoal/60 mb-1.5" for="c-name">Full name</label><input id="c-name" name="name" class="field" required autocomplete="name"></div>
                 <div><label class="block text-[10px] uppercase tracking-widest text-charcoal/60 mb-1.5" for="c-email">Email address</label><input id="c-email" name="email" type="email" class="field" required autocomplete="email"></div>
                 <div><label class="block text-[10px] uppercase tracking-widest text-charcoal/60 mb-1.5" for="c-msg">Message</label><textarea id="c-msg" name="message" rows="4" class="field" required></textarea></div>
-                <button class="bg-charcoal text-white hover:bg-coffee px-8 py-3.5 text-xs tracking-widest uppercase font-medium transition-colors">Send Message</button>
+                <button class="bg-charcoal text-white hover:bg-gold px-8 py-3.5 text-xs tracking-widest uppercase font-medium transition-colors">Send Message</button>
             </form>
         </div>
     </section>
