@@ -44,6 +44,7 @@
   /* ================================================================ state + api */
   const S = {
     settings: {}, plans: [], products: [], user: null, googleEnabled: false, options: {},
+    razorpayEnabled: false, razorpayKeyId: '',
     cart: [], coupon: '', quote: null, quoteSeq: 0, cat: 'All', acctTab: 'applications', ready: false,
   };
   const actions = {};  // data-action handlers (admin.js adds more)
@@ -304,27 +305,87 @@
     if (!S.cart.length) return;
     const u = S.user || {};
     actions['close-cart']();
+    const paymentChoice = S.razorpayEnabled ? `
+      <div>
+        <span class="block text-[10px] uppercase tracking-widest text-charcoal/60 mb-1.5">Payment method</span>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <label class="flex items-center justify-center gap-2 border border-black/15 px-3 py-3 cursor-pointer has-[:checked]:border-charcoal has-[:checked]:bg-surface transition-colors">
+            <input type="radio" name="payment" value="razorpay" checked class="accent-charcoal">Pay online</label>
+          <label class="flex items-center justify-center gap-2 border border-black/15 px-3 py-3 cursor-pointer has-[:checked]:border-charcoal has-[:checked]:bg-surface transition-colors">
+            <input type="radio" name="payment" value="cod" class="accent-charcoal">Pay on delivery</label>
+        </div>
+      </div>` : '<input type="hidden" name="payment" value="cod">';
     openModal(`<h2 class="font-serif-heading text-3xl uppercase mb-1">Checkout</h2>
-      <p class="text-xs font-light text-charcoal/60 mb-5">Total to pay: <b class="text-charcoal">${money(S.quote ? S.quote.total : 0)}</b> &middot; pay on delivery</p>
+      <p class="text-xs font-light text-charcoal/60 mb-5">Total to pay: <b class="text-charcoal">${money(S.quote ? S.quote.total : 0)}</b></p>
       <form data-form="checkout" class="space-y-3" novalidate>
+        ${paymentChoice}
         <div><label class="block text-[10px] uppercase tracking-widest text-charcoal/60 mb-1" for="k-name">Full name</label><input id="k-name" name="name" class="field" required value="${esc(u.name || '')}" autocomplete="name"></div>
         <div><label class="block text-[10px] uppercase tracking-widest text-charcoal/60 mb-1" for="k-phone">Phone number</label><input id="k-phone" name="phone" type="tel" class="field" required value="${esc(u.phone || '')}" autocomplete="tel"></div>
         <div><label class="block text-[10px] uppercase tracking-widest text-charcoal/60 mb-1" for="k-addr">Delivery address</label><textarea id="k-addr" name="address" rows="3" class="field" required placeholder="House no, street, city, PIN code" autocomplete="street-address">${esc(u.address || '')}</textarea></div>
-        <p class="text-[11px] text-charcoal/50">We will confirm your order by phone or WhatsApp. Online payment is not enabled yet: you pay on delivery.</p>
+        <p class="text-[11px] text-charcoal/50">${S.razorpayEnabled ? 'Pay securely by card, UPI or netbanking - or choose pay on delivery.' : 'We will confirm your order by phone or WhatsApp. Online payment is not enabled yet: you pay on delivery.'}</p>
         <button class="w-full bg-charcoal text-white hover:bg-coffee py-3.5 text-xs tracking-widest uppercase font-medium transition-colors">Place order</button>
       </form>`);
   };
-  forms.checkout = (f) => busy(f, async () => {
-    const d = formData(f);
-    const res = await api('/api/orders', { method: 'POST', body: { items: S.cart, coupon: S.coupon, customer: { name: d.name, phone: d.phone, address: d.address } } });
-    const o = res.order;
+
+  function orderPlacedModal(o) {
     S.cart = []; S.coupon = ''; S.quote = null; saveCart();
     openModal(`<div class="text-center pt-2">
         <div class="mx-auto w-12 h-12 rounded-full bg-coffee text-white flex items-center justify-center">${ic('check', 'w-6 h-6')}</div>
         <h2 class="font-serif-heading text-3xl uppercase mt-4">Order placed</h2>
         <p class="text-sm font-light mt-2">Reference <b>${esc(o.id)}</b> &middot; ${money(o.total)}</p>
-        <p class="text-xs font-light text-charcoal/60 mt-3">We will confirm by phone or WhatsApp. ${S.user ? 'You can follow it under My Account.' : ''}</p>
+        <p class="text-xs font-light text-charcoal/60 mt-3">${o.paymentStatus === 'Paid' ? 'Payment received. ' : ''}We will confirm by phone or WhatsApp. ${S.user ? 'You can follow it under My Account.' : ''}</p>
         <button data-action="close-modal" class="mt-6 bg-charcoal text-white px-8 py-3 text-xs tracking-widest uppercase hover:bg-coffee">Continue</button></div>`);
+  }
+
+  /* ---- Razorpay Checkout: script is only fetched the first time someone actually chooses to pay online */
+  let razorpayScriptPromise = null;
+  function loadRazorpayScript() {
+    if (window.Razorpay) return Promise.resolve();
+    if (!razorpayScriptPromise) {
+      razorpayScriptPromise = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        s.onload = () => resolve();
+        s.onerror = () => { razorpayScriptPromise = null; reject(new Error('Could not load the payment gateway. Please check your connection and try again.')); };
+        document.head.appendChild(s);
+      });
+    }
+    return razorpayScriptPromise;
+  }
+
+  function payWithRazorpay(create) {
+    return new Promise((resolve, reject) => {
+      const rzp = new window.Razorpay({
+        key: create.keyId, amount: create.amount, currency: create.currency,
+        name: create.brandName || 'Chikmagalur Filter Coffee', description: 'Order payment',
+        order_id: create.razorpayOrderId, prefill: create.prefill || {},
+        theme: { color: '#151515' },
+        handler: (resp) => resolve(resp),
+        modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
+      });
+      rzp.on('payment.failed', (resp) => reject(new Error((resp && resp.error && resp.error.description) || 'Payment failed. Please try again.')));
+      rzp.open();
+    });
+  }
+
+  forms.checkout = (f) => busy(f, async () => {
+    const d = formData(f);
+    const customer = { name: d.name, phone: d.phone, address: d.address };
+    if (d.payment === 'razorpay') {
+      const create = await api('/api/checkout/razorpay/create', { method: 'POST', body: { items: S.cart, coupon: S.coupon, customer } });
+      await loadRazorpayScript();
+      let resp;
+      try { resp = await payWithRazorpay(create); }
+      catch (e) { toast(e.message); return; }
+      const res = await api('/api/checkout/razorpay/verify', {
+        method: 'POST',
+        body: { pendingId: create.pendingId, razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature },
+      });
+      orderPlacedModal(res.order);
+      return;
+    }
+    const res = await api('/api/orders', { method: 'POST', body: { items: S.cart, coupon: S.coupon, customer } });
+    orderPlacedModal(res.order);
   });
 
   /* ================================================================ forms: contact */
@@ -662,7 +723,7 @@
     S.cart = loadCart(); updateBadge();
     try {
       const d = await api('/api/bootstrap');
-      Object.assign(S, { settings: d.settings, plans: d.plans, products: d.products, user: d.user, googleEnabled: d.googleEnabled, options: d.options });
+      Object.assign(S, { settings: d.settings, plans: d.plans, products: d.products, user: d.user, googleEnabled: d.googleEnabled, options: d.options, razorpayEnabled: !!d.razorpayEnabled, razorpayKeyId: d.razorpayKeyId || '' });
       S.cart = S.cart.filter((i) => productById(i.id)); saveCart();
       S.ready = true;
     } catch (e) {

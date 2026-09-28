@@ -256,11 +256,12 @@
 
   /* ------------------------------------------------ orders */
   function renderOrders(box, orders) {
-    box.innerHTML = table(['Order', 'Customer', 'Items', 'Total', 'Status', 'Placed'], orders.map((o) => `<tr>
+    box.innerHTML = table(['Order', 'Customer', 'Items', 'Total', 'Payment', 'Status', 'Placed'], orders.map((o) => `<tr>
       <td class="p-3 font-medium whitespace-nowrap">${esc(o.id)}</td>
       <td class="p-3"><b>${esc(o.customer.name)}</b><div class="text-charcoal/60">${esc(o.customer.phone)}</div><div class="text-charcoal/60 max-w-[16rem]">${esc(o.customer.address)}</div></td>
       <td class="p-3">${o.items.map((i) => `${esc(i.name)} &times; ${i.qty}`).join('<br>')}${o.coupon ? `<div class="text-[10px] text-coffee mt-1">Coupon ${esc(o.coupon)}</div>` : ''}</td>
       <td class="p-3 font-semibold whitespace-nowrap">${money(o.total)}</td>
+      <td class="p-3 whitespace-nowrap"><div>${esc(o.payment || 'Pay on delivery')}</div>${o.paymentStatus ? `<div class="text-[10px] ${o.paymentStatus === 'Paid' ? 'text-coffee' : 'text-charcoal/50'}">${esc(o.paymentStatus)}</div>` : ''}${o.razorpayPaymentId ? `<div class="text-[10px] text-charcoal/40">${esc(o.razorpayPaymentId)}</div>` : ''}</td>
       <td class="p-3">${miniSelect('admin-order-status', o.id, S.options.orderStatuses, o.status)}</td><td class="p-3 whitespace-nowrap text-charcoal/60">${fmtDateTime(o.createdAt)}</td></tr>`), 'No shop orders yet.');
   }
   actions['admin-order-status'] = async (el) => {
