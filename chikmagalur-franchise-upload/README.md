@@ -6,7 +6,7 @@ A franchise-first website (the franchise is the main highlight; the coffee shop 
 - **Google sign-in** (real OAuth) + email/password accounts.
 - **Redis** (Vercel Marketplace / Upstash) for all data: applications, plans, users, sessions, orders, products, coupons, messages, settings.
 - **Admin dashboard** at `/#/admin`: overview + charts, applications, franchise plans, shop orders, products, coupons, messages, site settings (hero text, contact details, WhatsApp, shipping).
-- Shop with basket, coupons and checkout (**pay on delivery**; prices are always calculated on the server).
+- Shop with basket, coupons and checkout (**pay on delivery**, or **online via Razorpay** once configured; prices are always calculated on the server).
 
 No framework or build step is needed to run it: plain Node + static files. Runs on Vercel or locally with the same code.
 
@@ -53,6 +53,26 @@ Any other Redis also works: set `REDIS_URL=redis://...` (or `rediss://...`) inst
 3. Put the client ID and secret in `.env.local` **and** in Vercel -> Settings -> Environment Variables:
    `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
 4. Applicants who sign in with the **same email they applied with** automatically see their earlier applications.
+
+## 3b. Online payment (Razorpay)
+
+Shop checkout offers **Pay on delivery** by default. To also accept online payment (cards, UPI, netbanking):
+
+1. Sign up at [razorpay.com](https://razorpay.com) and complete KYC/activation for live payments (test mode works immediately with no KYC).
+2. **Settings -> API Keys** -> generate a key pair. Put them in Vercel -> Settings -> Environment Variables:
+   `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`.
+3. **Settings -> Webhooks** -> add `https://YOUR-DOMAIN/api/webhooks/razorpay`, enable the `payment.captured` event, and set a secret.
+   Put that same value in Vercel as `RAZORPAY_WEBHOOK_SECRET`.
+4. **Important:** also add `NODEJS_HELPERS` = `0` in Vercel's Environment Variables. Vercel's Node runtime normally
+   pre-parses the request body before our code sees it, which throws away the exact bytes Razorpay signed - without
+   this setting the webhook cannot be verified and is safely rejected rather than trusted blindly. (The main checkout
+   flow does not depend on the webhook - it verifies the payment signature directly when the browser returns from
+   Checkout - the webhook is only a backup for the rare case the tab closes before that happens.)
+5. Redeploy so the new environment variables take effect. Once `RAZORPAY_KEY_ID` + `RAZORPAY_KEY_SECRET` are set,
+   "Pay online" appears automatically next to "Pay on delivery" at checkout - no code changes needed. Leave the
+   variables unset to keep the site pay-on-delivery only, exactly as it is today.
+6. Admin -> Shop Orders shows a **Payment** column with the method, status (`Paid` / `Cash on delivery`) and the
+   Razorpay payment ID for any online payment.
 
 ## 4. Make yourself admin
 
