@@ -283,7 +283,7 @@ async function finalizeRazorpayPayment(db, pendingId, razorpayOrderId, paymentId
 }
 
 route('POST', '/api/checkout/razorpay/create', {}, async (ctx) => {
-  await limit(ctx, 'rzp-create', 10, 3600);
+  await limit(ctx, 'rzp-create', 30, 3600);
   if (!RZP.config().enabled) throw fail(503, 'Online payment is not available right now. Please choose Pay on delivery.');
   const b = ctx.body || {};
   const c = b.customer || {};
@@ -315,7 +315,7 @@ route('POST', '/api/checkout/razorpay/create', {}, async (ctx) => {
 });
 
 route('POST', '/api/checkout/razorpay/verify', {}, async (ctx) => {
-  await limit(ctx, 'rzp-verify', 20, 3600);
+  await limit(ctx, 'rzp-verify', 60, 3600);
   const b = ctx.body || {};
   const pendingId = clean(b.pendingId, 60);
   const orderId = clean(b.razorpay_order_id, 100);
