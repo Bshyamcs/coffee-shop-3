@@ -2,6 +2,7 @@
 const { getDb } = require('./db');
 const { KEYS, DEFAULT_SETTINGS, ensureSeed } = require('./seed');
 const A = require('./auth');
+const RZP = require('./razorpay');
 
 /* ================================================================== helpers */
 class HttpError extends Error {
@@ -75,17 +76,28 @@ function redirect(res, location) {
   res.end();
 }
 
+/**
+ * Returns { raw, parsed }. `raw` is the exact request body text when we can get at it - needed for
+ * webhook HMAC signature verification, where the signature is computed over the original bytes.
+ * When Vercel has already parsed the body into an object for us (its default `req.body` helper),
+ * those original bytes are gone, so `raw` is null; callers that need a verifiable raw body (the
+ * Razorpay webhook) must treat `raw === null` as "cannot verify" rather than guessing via
+ * JSON.stringify, which is not guaranteed to reproduce the exact bytes that were signed.
+ */
 async function readBody(req) {
-  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return null;
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return { raw: '', parsed: null };
   if (!String(req.headers['content-type'] || '').includes('application/json')) throw fail(415, 'Content-Type must be application/json');
   let pre;
   try { pre = req.body; } catch { throw fail(400, 'Invalid JSON'); }
   if (pre !== undefined) {
     if (Buffer.isBuffer(pre)) pre = pre.toString('utf8');
-    if (typeof pre === 'string') { if (!pre.trim()) return {}; try { return JSON.parse(pre); } catch { throw fail(400, 'Invalid JSON'); } }
-    return pre && typeof pre === 'object' ? pre : {};
+    if (typeof pre === 'string') {
+      if (!pre.trim()) return { raw: '', parsed: {} };
+      try { return { raw: pre, parsed: JSON.parse(pre) }; } catch { throw fail(400, 'Invalid JSON'); }
+    }
+    return { raw: null, parsed: pre && typeof pre === 'object' ? pre : {} };
   }
-  if (req.readableEnded) return {};
+  if (req.readableEnded) return { raw: '', parsed: {} };
   const chunks = []; let size = 0;
   for await (const c of req) {
     size += c.length;
@@ -93,8 +105,8 @@ async function readBody(req) {
     chunks.push(c);
   }
   const text = Buffer.concat(chunks).toString('utf8');
-  if (!text.trim()) return {};
-  try { return JSON.parse(text); } catch { throw fail(400, 'Invalid JSON'); }
+  if (!text.trim()) return { raw: '', parsed: {} };
+  try { return { raw: text, parsed: JSON.parse(text) }; } catch { throw fail(400, 'Invalid JSON'); }
 }
 
 function checkOrigin(req) {
@@ -192,6 +204,8 @@ route('GET', '/api/bootstrap', {}, async (ctx) => {
   return {
     settings, plans, products,
     googleEnabled: A.googleConfig().enabled,
+    razorpayEnabled: RZP.config().enabled,
+    razorpayKeyId: RZP.config().enabled ? RZP.config().keyId : '',
     user: publicUser(ctx.user, ctx.isAdmin),
     options: { budgets: BUDGETS, property: PROPERTY, experience: EXPERIENCE, timeline: TIMELINE, categories: CATEGORIES, appStatuses: APP_STATUSES, orderStatuses: ORDER_STATUSES },
   };
@@ -231,11 +245,104 @@ route('POST', '/api/orders', {}, async (ctx) => {
     coupon: q.coupon ? q.coupon.code : null,
     customer, userId: ctx.user && !ctx.user.synthetic ? ctx.user.id : null,
     email: ctx.user && !ctx.user.synthetic ? ctx.user.email : '',
-    payment: 'Pay on delivery', status: 'Processing', createdAt: nowIso(),
+    payment: 'Pay on delivery', paymentStatus: 'Cash on delivery', status: 'Processing', createdAt: nowIso(),
   };
   await ctx.db.hsetJSON(KEYS.orders, order.id, order);
   if (order.userId) await ctx.db.hsetJSON('uorders:' + order.userId, order.id, 1);
   return { ok: true, order };
+});
+
+/* ---- Razorpay online payment: order is only written to KEYS.orders once the payment signature is verified.
+   Until then it lives as a short-lived "pending" record so an abandoned checkout never creates a phantom order. */
+const RZP_PENDING_TTL = 1800; // 30 minutes to complete payment
+async function finalizeRazorpayPayment(db, pendingId, razorpayOrderId, paymentId) {
+  const already = await db.getJSON('rzp_order_for:' + paymentId);
+  if (already) return db.hgetJSON(KEYS.orders, already);
+  const pending = await db.getJSON('rzp_pending:' + pendingId);
+  if (!pending || pending.razorpayOrderId !== razorpayOrderId) return null;
+  // one payment id can only ever finalise one order, even if verify and the webhook race each other
+  if (!(await db.setnx('rzp_paid:' + paymentId, pendingId, 86400))) {
+    const again = await db.getJSON('rzp_order_for:' + paymentId);
+    return again ? db.hgetJSON(KEYS.orders, again) : null;
+  }
+  const q = await quote(db, pending.items, pending.coupon); // recompute fresh: never trust the pending snapshot's totals
+  const order = {
+    id: await nextId(db, 'order', 10001, 'ORD-'),
+    items: q.lines.map(({ id, name, weight, price, qty, lineTotal }) => ({ id, name, weight, price, qty, lineTotal })),
+    subtotal: q.subtotal, discount: q.discount, shipping: q.shipping, total: q.total,
+    coupon: q.coupon ? q.coupon.code : null,
+    customer: pending.customer, userId: pending.userId, email: pending.email,
+    payment: 'Razorpay', paymentStatus: 'Paid', razorpayOrderId, razorpayPaymentId: paymentId,
+    status: 'Processing', createdAt: nowIso(),
+  };
+  await db.hsetJSON(KEYS.orders, order.id, order);
+  if (order.userId) await db.hsetJSON('uorders:' + order.userId, order.id, 1);
+  await db.setJSON('rzp_order_for:' + paymentId, order.id, 86400);
+  await db.del('rzp_pending:' + pendingId);
+  return order;
+}
+
+route('POST', '/api/checkout/razorpay/create', {}, async (ctx) => {
+  await limit(ctx, 'rzp-create', 10, 3600);
+  if (!RZP.config().enabled) throw fail(503, 'Online payment is not available right now. Please choose Pay on delivery.');
+  const b = ctx.body || {};
+  const c = b.customer || {};
+  const customer = {
+    name: needText(c.name, 'Name', 2, 80),
+    phone: needPhone(c.phone),
+    address: needText(c.address, 'Delivery address', 10, 300),
+  };
+  const q = await quote(ctx.db, b.items, b.coupon);
+  const id = uid('rzp');
+  const pending = {
+    id, items: b.items, coupon: b.coupon || '', customer,
+    userId: ctx.user && !ctx.user.synthetic ? ctx.user.id : null,
+    email: ctx.user && !ctx.user.synthetic ? ctx.user.email : '',
+    createdAt: nowIso(),
+  };
+  const amount = q.total * 100; // paise
+  let rOrder;
+  try { rOrder = await RZP.createOrder({ amount, receipt: id, notes: { pendingId: id } }); }
+  catch (e) { throw fail(e.status || 502, e.message || 'Could not start payment. Please try again.'); }
+  pending.razorpayOrderId = rOrder.id;
+  await ctx.db.setJSON('rzp_pending:' + id, pending, RZP_PENDING_TTL);
+  const settings = await getSettings(ctx.db);
+  return {
+    ok: true, pendingId: id, razorpayOrderId: rOrder.id, amount, currency: 'INR',
+    keyId: RZP.config().keyId, brandName: settings.brandName,
+    prefill: { name: customer.name, contact: customer.phone, email: pending.email || '' },
+  };
+});
+
+route('POST', '/api/checkout/razorpay/verify', {}, async (ctx) => {
+  await limit(ctx, 'rzp-verify', 20, 3600);
+  const b = ctx.body || {};
+  const pendingId = clean(b.pendingId, 60);
+  const orderId = clean(b.razorpay_order_id, 100);
+  const paymentId = clean(b.razorpay_payment_id, 100);
+  const signature = clean(b.razorpay_signature, 200);
+  if (!pendingId || !orderId || !paymentId || !signature) throw fail(400, 'Missing payment details');
+  if (!RZP.verifyPaymentSignature({ orderId, paymentId, signature })) throw fail(400, 'Payment verification failed. If money was deducted, contact us with your payment ID and we will confirm your order.');
+  const order = await finalizeRazorpayPayment(ctx.db, pendingId, orderId, paymentId);
+  if (!order) throw fail(410, 'This payment session has expired or was already used. If money was deducted, contact us with your payment ID and we will confirm your order.');
+  return { ok: true, order };
+});
+
+// Razorpay calls this server-to-server as a backup in case the browser never reaches /verify (closed tab,
+// dropped network). Its signature covers the RAW request body - see readBody()'s doc comment above.
+route('POST', '/api/webhooks/razorpay', {}, async (ctx) => {
+  const sig = ctx.req.headers['x-razorpay-signature'];
+  if (ctx.rawBody == null) {
+    console.error('[razorpay webhook] raw body unavailable - set NODEJS_HELPERS=0 in Vercel env vars so the signature can be verified');
+    throw fail(400, 'Cannot verify webhook');
+  }
+  if (!sig || !RZP.verifyWebhookSignature(ctx.rawBody, sig)) throw fail(400, 'Invalid signature');
+  const event = ctx.body || {};
+  const p = event.payload && event.payload.payment && event.payload.payment.entity;
+  if (event.event === 'payment.captured' && p && p.notes && p.notes.pendingId) {
+    await finalizeRazorpayPayment(ctx.db, p.notes.pendingId, p.order_id, p.id);
+  }
+  return { ok: true };
 });
 
 route('POST', '/api/franchise/apply', {}, async (ctx) => {
@@ -628,9 +735,11 @@ async function handle(req, res) {
       req, res, url, db, query: Object.fromEntries(url.searchParams),
       params: Object.fromEntries(r.keys.map((k, i) => [k, m[i + 1]])),
       ip: String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown',
-      body: null, session: null, user: null, isAdmin: false,
+      body: null, rawBody: '', session: null, user: null, isAdmin: false,
     };
-    ctx.body = await readBody(req);
+    const parsedBody = await readBody(req);
+    ctx.body = parsedBody.parsed;
+    ctx.rawBody = parsedBody.raw;
     await loadAuth(ctx);
     if (r.auth === 'admin' && !ctx.isAdmin) throw fail(ctx.user ? 403 : 401, ctx.user ? 'Admin access required' : 'Please sign in as administrator');
     if (r.auth === 'user' && !ctx.user) throw fail(401, 'Please sign in');
